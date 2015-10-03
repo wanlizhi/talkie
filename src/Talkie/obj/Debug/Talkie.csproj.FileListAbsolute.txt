@@ -1,0 +1,14 @@
+C:\Users\lizwan\Projects\Talkie\src\Talkie\bin\Debug\Talkie.exe.config
+C:\Users\lizwan\Projects\Talkie\src\Talkie\bin\Debug\Talkie.exe
+C:\Users\lizwan\Projects\Talkie\src\Talkie\bin\Debug\Talkie.pdb
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.csprojResolveAssemblyReference.cache
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\MainWindow.g.cs
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\App.g.cs
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie_MarkupCompile.cache
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie_MarkupCompile.lref
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\MainWindow.baml
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.g.resources
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.Properties.Resources.resources
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.csproj.GenerateResource.Cache
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.exe
+C:\Users\lizwan\Projects\Talkie\src\Talkie\obj\Debug\Talkie.pdb

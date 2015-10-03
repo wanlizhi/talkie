@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -63,7 +64,11 @@ namespace Talkie
             base.OnSourceInitialized(e);
 
             IntPtr handle = new WindowInteropHelper(this).Handle;
-            RegisterHotKey(handle, MY_HOTKEYID, (uint)KeyModifiers.Alt, 48);
+
+            uint modifiers = uint.Parse(ConfigurationManager.AppSettings["KeyModifiers"]);
+            uint key = uint.Parse(ConfigurationManager.AppSettings["Key"]);
+
+            RegisterHotKey(handle, MY_HOTKEYID, modifiers, key);
 
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 

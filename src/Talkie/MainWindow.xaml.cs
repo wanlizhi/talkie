@@ -41,6 +41,22 @@ namespace Talkie
 
         [DllImport("user32.dll")]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+        [DllImport("User32.dll", EntryPoint = "FindWindow")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("User32.dll", EntryPoint = "FindWindowEx")]
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowText(IntPtr hwnd, string lPstring);
+
+        [DllImport("user32")]
+        public extern static int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -59,8 +75,17 @@ namespace Talkie
             {
                 Console.WriteLine("he");
                 //全局快捷键要执行的命令
+                Say();
             }
             return IntPtr.Zero;
+        }
+
+        void Say()
+        {
+            IntPtr ptr = FindWindow(null, "SAPI5 TTSAPP");
+            ptr = FindWindowEx(ptr, IntPtr.Zero, "Button", "Speak");
+            const int BM_CLICK = 0xF5;
+            SendMessage(ptr, BM_CLICK, 0, 0);     //需要管理员权限，发送点击按钮的消息  
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Talkie
     public partial class MainWindow : Window
     {
         private const Int32 MY_HOTKEYID = 0x9999;
+        private IntPtr NeoWnd { get; set; }
 
         public MainWindow()
         {
@@ -55,7 +56,7 @@ namespace Talkie
         public extern static int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
-        private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, IntPtr lParam);
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -83,9 +84,25 @@ namespace Talkie
         void Say()
         {
             IntPtr ptr = FindWindow(null, "SAPI5 TTSAPP");
+            NeoWnd = ptr;
+
+            SetText();
+
             ptr = FindWindowEx(ptr, IntPtr.Zero, "Button", "Speak");
             const int BM_CLICK = 0xF5;
-            SendMessage(ptr, BM_CLICK, 0, 0);     //需要管理员权限，发送点击按钮的消息  
+            SendMessage(ptr, BM_CLICK, 0, IntPtr.Zero);     //需要管理员权限，发送点击按钮的消息  
+        }
+
+        void SetText()
+        {
+            const int WM_SETTEXT                      =0x000C;
+            string txt = Clipboard.GetText();
+
+            IntPtr txtWnd = FindWindowEx(NeoWnd, IntPtr.Zero, "RichEdit20A", null);
+            IntPtr lparam = new IntPtr();
+            lparam = Marshal.StringToHGlobalAnsi(txt);
+            SendMessage(txtWnd, WM_SETTEXT, 0, lparam);
+            Marshal.FreeHGlobal(lparam);
         }
     }
 }

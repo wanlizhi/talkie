@@ -28,12 +28,18 @@ namespace Talkie
         WindowsKey = 8
     }
 
+    public enum WND_MSG
+    {
+        BM_CLICK = 0xF5
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const Int32 MY_HOTKEYID = 0x9999;
+        private const Int32 MY_HOTKEYID = 0x9999;  // Speak
+        private const Int32 HOTKEY_PAUSERESUME = 0x10000;  // Pause/Resume
+
         private IntPtr NeoWnd { get; set; }
 
         public MainWindow()
@@ -70,6 +76,9 @@ namespace Talkie
 
             RegisterHotKey(handle, MY_HOTKEYID, modifiers, key);
 
+            // Alt + 4 Pause/Resume
+            RegisterHotKey(handle, HOTKEY_PAUSERESUME, (uint) KeyModifiers.Alt, 52 /* ascii for 4*/);
+
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 
             source.AddHook(WndProc);
@@ -77,12 +86,26 @@ namespace Talkie
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handle)
         {
-            if (wParam.ToInt32() == MY_HOTKEYID)
+            int v = 0;
+            try
             {
-                Console.WriteLine("he");
-                //全局快捷键要执行的命令
-                Say();
+                v = wParam.ToInt32();
             }
+            catch (OverflowException)
+            {
+
+            }
+            switch (v)
+            {
+                case MY_HOTKEYID:
+                    Console.WriteLine("he");
+                    //全局快捷键要执行的命令
+                    Say();
+                    break;
+                case HOTKEY_PAUSERESUME:
+                    PauseOrResume();
+                    break;
+            }                                                                          
             return IntPtr.Zero;
         }
 
@@ -108,6 +131,26 @@ namespace Talkie
             lparam = Marshal.StringToHGlobalAnsi(txt);
             SendMessage(txtWnd, WM_SETTEXT, 0, lparam);
             Marshal.FreeHGlobal(lparam);
+        }
+
+        void PauseOrResume()
+        {
+            if (NeoWnd !=null)
+            {
+                IntPtr ptr = FindWindowEx(NeoWnd, IntPtr.Zero, "Button", "Pause");
+                if (ptr != IntPtr.Zero)
+                {
+                    SendMessage(ptr, (int)WND_MSG.BM_CLICK, 0, IntPtr.Zero);     //需要管理员权限，发送点击按钮的消息  
+                }
+                else
+                {
+                    ptr = FindWindowEx(NeoWnd, IntPtr.Zero, "Button", "Resume");
+                    if (ptr != IntPtr.Zero)
+                    {
+                        SendMessage(ptr, (int)WND_MSG.BM_CLICK, 0, IntPtr.Zero);     //需要管理员权限，发送点击按钮的消息  
+                    }
+                }
+            }
         }
     }
 }

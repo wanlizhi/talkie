@@ -97,9 +97,8 @@ namespace Talkie
             }
             switch (v)
             {
+                //全局快捷键要执行的命令
                 case MY_HOTKEYID:
-                    Console.WriteLine("he");
-                    //全局快捷键要执行的命令
                     Say();
                     break;
                 case HOTKEY_PAUSERESUME:

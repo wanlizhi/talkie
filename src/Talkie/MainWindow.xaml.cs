@@ -39,6 +39,12 @@ namespace Talkie
     {
         private const Int32 MY_HOTKEYID = 0x9999;  // Speak
         private const Int32 HOTKEY_PAUSERESUME = 0x10000;  // Pause/Resume
+        private const int HOTKEY_HIDESHOW_APP = 0x10001; //Show or Hide TTSApp
+
+        private const int GWL_EXSTYLE = -0x14;
+        private const int SW_HIDE = 0x00;
+        private const int SW_SHOW = 0x05;
+        private const int WS_EX_APPWINDOW = 0x40000;
 
         private IntPtr NeoWnd { get; set; }
 
@@ -65,6 +71,14 @@ namespace Talkie
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, IntPtr lParam);
 
+        [DllImport("User32.Dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -78,6 +92,9 @@ namespace Talkie
 
             // Alt + 4 Pause/Resume
             RegisterHotKey(handle, HOTKEY_PAUSERESUME, (uint) KeyModifiers.Alt, 52 /* ascii for 4*/);
+
+            // Alt + 6 Show/Hide TTSApp
+            RegisterHotKey(handle, HOTKEY_PAUSERESUME, (uint)KeyModifiers.Alt, 54 /* ascii for 6*/);
 
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 
@@ -103,6 +120,9 @@ namespace Talkie
                     break;
                 case HOTKEY_PAUSERESUME:
                     PauseOrResume();
+                    break;
+                case HOTKEY_HIDESHOW_APP:
+                    ShowOrHide();
                     break;
             }                                                                          
             return IntPtr.Zero;
@@ -148,6 +168,27 @@ namespace Talkie
                     {
                         SendMessage(ptr, (int)WND_MSG.BM_CLICK, 0, IntPtr.Zero);     //需要管理员权限，发送点击按钮的消息  
                     }
+                }
+            }
+        }
+
+        void ShowOrHide()
+        {
+            if (NeoWnd != null)
+            {
+                int l = GetWindowLong(NeoWnd, GWL_EXSTYLE);
+
+                if ( (l & WS_EX_APPWINDOW) == 0) // Not on task bar
+                {
+                    SetWindowLong(NeoWnd, GWL_EXSTYLE, l|WS_EX_APPWINDOW);
+
+                    ShowWindow(NeoWnd, SW_HIDE);
+                    ShowWindow(NeoWnd, SW_SHOW);
+                }
+                else
+                {
+                    SetWindowLong(NeoWnd, GWL_EXSTYLE, l & (~WS_EX_APPWINDOW));
+                    ShowWindow(NeoWnd, SW_HIDE);
                 }
             }
         }

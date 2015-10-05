@@ -94,11 +94,14 @@ namespace Talkie
             RegisterHotKey(handle, HOTKEY_PAUSERESUME, (uint) KeyModifiers.Alt, 52 /* ascii for 4*/);
 
             // Alt + 6 Show/Hide TTSApp
-            RegisterHotKey(handle, HOTKEY_PAUSERESUME, (uint)KeyModifiers.Alt, 54 /* ascii for 6*/);
+            RegisterHotKey(handle, HOTKEY_HIDESHOW_APP, (uint)KeyModifiers.Alt, 54 /* ascii for 6*/);
 
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 
             source.AddHook(WndProc);
+
+            IntPtr ptr = FindWindow(null, "SAPI5 TTSAPP");
+            NeoWnd = ptr;
         }     
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handle)
@@ -130,12 +133,9 @@ namespace Talkie
 
         void Say()
         {
-            IntPtr ptr = FindWindow(null, "SAPI5 TTSAPP");
-            NeoWnd = ptr;
-
             SetText();
 
-            ptr = FindWindowEx(ptr, IntPtr.Zero, "Button", "Speak");
+            IntPtr ptr = FindWindowEx(NeoWnd, IntPtr.Zero, "Button", "Speak");
             const int BM_CLICK = 0xF5;
             SendMessage(ptr, BM_CLICK, 0, IntPtr.Zero);     //需要管理员权限，发送点击按钮的消息  
         }
